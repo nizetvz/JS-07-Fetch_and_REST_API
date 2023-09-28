@@ -16,6 +16,7 @@ const fetchPokemon= async(pokemon) => {
         const response = await fetch(`${BASE_URL}pokemon/${pokemon}`);
         const parsedResponse= await response.json();
         return parsedResponse; 
+
     } catch (err){ 
         console.error(err);
     }
@@ -45,8 +46,11 @@ document.getElementById("previous-btn")
 const currentPokeId=parseInt(localStorage.getItem('currentPokeID'));
 const newId=Math.max(1,currentPokeId -1);
 const pokemon=await fetchPokemon (newId);
-console.log(pokemon.id);
-localStorage.setItem("currentPokeId", newId);
+console.log(pokemon.name);
+localStorage.setItem("currentPokeId", pokemon.id);
+document.getElementById('poke-name').value = pokemon.name;
+    localStorage.setItem('pokemonInfo', JSON.stringify(pokemon));
+    setPokemonCard();
 })
 
 document.getElementById("next-btn")
@@ -54,8 +58,21 @@ document.getElementById("next-btn")
     const newId=currentPokeId+1;
     const pokemon= await fetchPokemon (newId);
     console.log(pokemon.name);
-    localStorage.setItem("currentPokeId", newId);
-})
+    localStorage.setItem("currentPokeId", pokemon.id);
+    document.getElementById('poke-name').value = pokemon.name;
+    localStorage.setItem('pokemonInfo', JSON.stringify(pokemon));
+    setPokemonCard();
+});
+
+function setPokemonCard() {
+    let pokeInfo = localStorage.getItem('pokemonInfo');
+    pokeInfo = JSON.parse(pokeInfo);
+    document.getElementById('poke-img-front').src = pokeInfo.sprites.front_default;
+    document.getElementById('poke-img-back').src = pokeInfo.sprites.back_default;
+    document.getElementById('poke-name-card').textContent = pokeInfo.name;
+    document.getElementById('poke-id').textContent = pokeInfo.id;
+    document.getElementById('poke-weight').textContent = pokeInfo.weight;
+}
 
 // POST
 
@@ -79,8 +96,3 @@ document.getElementById("next-btn")
 // id, peso del pokemon. Puntos extra si se muestra una imagen.
 // -La tarjeta debe cargarse en pantalla aún si se cierra la ventana del navegador.
 // Para obtener la información recuerda localStorage y nuestro método asíncrono de Fetch.
-
-
-
-
-
